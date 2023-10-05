@@ -24,6 +24,7 @@ namespace LINQExample_1
 
             //Select and Where operators - Querry Syntax
             var result = from emp in employeeList
+                         where emp.AnualSalary >= 50000
                          select new
                          {
                              FullName = emp.FirstName + " " + emp.LastName,
