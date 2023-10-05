@@ -66,11 +66,11 @@ namespace ThePretendCompanyApplication
                              };
             foreach (var result in resultList)
             {
-                Console.WriteLine($"First Name : {result.FirstName}" +
-                                  $"Last Name : {result.LastName}" +
-                                  $"Annual salary : {result.AnnualSalary}" +
-                                  $"Manager : {result.Manager}" +
-                                  $"Deparment : {result.Department}");
+                Console.WriteLine($"First Name : {result.FirstName}\n" +
+                                  $"Last Name : {result.LastName}\n" +
+                                  $"Annual salary : {result.AnnualSalary}\n" +
+                                  $"Manager : {result.Manager}\n" +
+                                  $"Deparment : {result.Department}\n");
             }
             // for finding highest salary
             Console.WriteLine($"Highest salary : { resultList.Max(a=>a.AnnualSalary) }");
