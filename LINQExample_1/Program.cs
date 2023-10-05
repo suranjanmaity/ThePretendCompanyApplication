@@ -23,16 +23,60 @@ namespace LINQExample_1
             //}
 
             //Select and Where operators - Querry Syntax
-            var result = from emp in employeeList
-                         where emp.AnualSalary >= 50000
+            //var result = from emp in employeeList
+            //             where emp.AnualSalary >= 50000
+            //             select new
+            //             {
+            //                 FullName = emp.FirstName + " " + emp.LastName,
+            //                 AnnualSalary = emp.AnualSalary
+            //             };
+            //foreach (var res in result)
+            //{
+            //    Console.WriteLine($"{res.FullName,-20} {res.AnnualSalary,10}");
+            //}
+
+            // Differed Execution Example
+            /*
+             * Differed execution revaluates on each execution which is know as  Lazy Evaluation 
+             */
+            var result = from emp in employeeList.GetHighSalariedEmployees()
                          select new
                          {
                              FullName = emp.FirstName + " " + emp.LastName,
                              AnnualSalary = emp.AnualSalary
                          };
+            employeeList.Add(new Employee
+            {
+                Id = 5,
+                FirstName = "Surj",
+                LastName = "Maity",
+                AnualSalary = 100000.20m,
+                IsManager = true,
+                DepartmentId = 2,
+            });
             foreach (var res in result)
             {
                 Console.WriteLine($"{res.FullName,-20} {res.AnnualSalary,10}");
+            }
+        }
+    }
+    public static class EnumrableCollecctionExtensionMethods
+    {
+        // Extension method
+        public static IEnumerable<Employee> GetHighSalariedEmployees(this IEnumerable<Employee> employees)
+        {
+            foreach (Employee employee in employees)
+            {
+                Console.WriteLine($"Accessing employee : {employee.FirstName + " " + employee.LastName}");
+                if (employee.AnualSalary>=50000)
+                {
+                    yield return employee;
+                    /* you can use the yield return keyword to return each element one at a time,
+                     * the sequence returned from the iterator method can be consumed by using foreach statement or linq query
+                     * each iteration of the for each loop calls the iterator mehtod when a yield return statement is reached in the iterator method the relevent value in the IEnumerable collection is returned and the current location in code is retained,
+                     * execution is restarted from that location when the iterator function is called.
+                    */
+                }
             }
         }
     }
