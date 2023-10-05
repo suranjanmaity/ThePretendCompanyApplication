@@ -84,16 +84,31 @@ namespace LINQExample_1
             //    Console.WriteLine($"{res.FullName,-20} {res.AnnualSalary,10}");
             //}
 
-            // Join Operation Example - Method Syntax
-            var result = departmentList.Join(employeeList,
-                    department => department.Id,
-                    employee => employee.DepartmentId,
-                    (department, employee) => new {
-                        FullName = employee.FirstName + " " + employee.LastName,
-                        AnnualSalary = employee.AnualSalary,
-                        DeparmentName = department.LongName
-                    }
-                );
+            //// Join Operation Example - Method Syntax
+            //var result = departmentList.Join(employeeList,
+            //        department => department.Id,
+            //        employee => employee.DepartmentId,
+            //        (department, employee) => new {
+            //            FullName = employee.FirstName + " " + employee.LastName,
+            //            AnnualSalary = employee.AnualSalary,
+            //            DeparmentName = department.LongName
+            //        }
+            //    );
+            //foreach (var res in result)
+            //{
+            //    Console.WriteLine($"{res.FullName,-20} {res.AnnualSalary,10}\t{res.DeparmentName}");
+            //}
+
+            //// Join Operation Example - Query Syntax
+            var result = from employee in employeeList
+                         join department in departmentList
+                         on employee.DepartmentId equals department.Id
+                         select new
+                         {
+                             FullName = employee.FirstName + " " + employee.LastName,
+                             AnnualSalary = employee.AnualSalary,
+                             DeparmentName = department.LongName
+                         };
             foreach (var res in result)
             {
                 Console.WriteLine($"{res.FullName,-20} {res.AnnualSalary,10}\t{res.DeparmentName}");
