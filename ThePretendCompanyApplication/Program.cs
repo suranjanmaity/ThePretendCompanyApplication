@@ -52,6 +52,26 @@ namespace ThePretendCompanyApplication
                 Console.WriteLine($"Long Name : {department.LongName}");
                 Console.WriteLine();
             }
+            //for selecting the employees with their department name using inner join clause.
+            var resultList = from emp in employeeList
+                             join dept in departmentList
+                             on emp.DepartmentId equals dept.Id
+                             select new
+                             {
+                                 FirstName = emp.FirstName,
+                                 LastName = emp.LastName,
+                                 AnnualSalary = emp.AnualSalary,
+                                 Manager = emp.IsManager,
+                                 Department = dept.LongName
+                             };
+            foreach (var result in resultList)
+            {
+                Console.WriteLine($"First Name : {result.FirstName}" +
+                                  $"Last Name : {result.LastName}" +
+                                  $"Annual salary : {result.AnnualSalary}" +
+                                  $"Manager : {result.Manager}" +
+                                  $"Deparment : {result.Department}");
+            }
         }
     }
 }
