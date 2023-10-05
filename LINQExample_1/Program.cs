@@ -100,18 +100,37 @@ namespace LINQExample_1
             //}
 
             //// Join Operation Example - Query Syntax
-            var result = from employee in employeeList
-                         join department in departmentList
-                         on employee.DepartmentId equals department.Id
-                         select new
-                         {
-                             FullName = employee.FirstName + " " + employee.LastName,
-                             AnnualSalary = employee.AnualSalary,
-                             DeparmentName = department.LongName
-                         };
-            foreach (var res in result)
+            //var result = from employee in employeeList
+            //             join department in departmentList
+            //             on employee.DepartmentId equals department.Id
+            //             select new
+            //             {
+            //                 FullName = employee.FirstName + " " + employee.LastName,
+            //                 AnnualSalary = employee.AnualSalary,
+            //                 DeparmentName = department.LongName
+            //             };
+            //foreach (var res in result)
+            //{
+            //    Console.WriteLine($"{res.FullName,-20} {res.AnnualSalary,10}\t{res.DeparmentName}");
+            //}
+
+            //// GroupJoin Operator Example - Method Syntax
+            var results = departmentList.GroupJoin(employeeList,
+                    dept => dept.Id,
+                    emp => emp.DepartmentId,
+                    (dept, employeesGroup) => new
+                    {
+                        Employees = employeesGroup,
+                        DeparmentName = dept.LongName
+                    }
+                    );
+            foreach (var item in results)
             {
-                Console.WriteLine($"{res.FullName,-20} {res.AnnualSalary,10}\t{res.DeparmentName}");
+                Console.WriteLine($"Department Name: {item.DeparmentName}");
+                foreach (var emp in item.Employees)
+                {
+                    Console.WriteLine($"\t{emp.FirstName} {emp.LastName}");
+                }
             }
         }
     }
