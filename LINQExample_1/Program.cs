@@ -14,7 +14,7 @@ namespace LINQExample_1
             {
                 FullName = e.FirstName + " " + e.LastName,
                 AnnualSalary = e.AnualSalary
-            });
+            }).Where(e=>e.AnnualSalary >= 50000) ;
             foreach (var res in result)
             {
                 Console.WriteLine($"Full Name : {res.FullName}");
