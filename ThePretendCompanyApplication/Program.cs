@@ -72,6 +72,12 @@ namespace ThePretendCompanyApplication
                                   $"Manager : {result.Manager}" +
                                   $"Deparment : {result.Department}");
             }
+            // for finding highest salary
+            Console.WriteLine($"Highest salary : { resultList.Max(a=>a.AnnualSalary) }");
+            // for finding Lowest salary
+            Console.WriteLine($"Lowest salary : { resultList.Min(a=>a.AnnualSalary) }");
+            // for finding Average salary
+            Console.WriteLine($"Average salary : { resultList.Average(a=>a.AnnualSalary) }");
         }
     }
 }
