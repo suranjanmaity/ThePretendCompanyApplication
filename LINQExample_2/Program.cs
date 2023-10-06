@@ -2,6 +2,7 @@
 using LINQExample_Northwind.Comparer;
 using LINQExample_Northwind.DAL;
 using Microsoft.Extensions.Configuration;
+using System.Collections;
 using System.ComponentModel.DataAnnotations;
 using System.Net;
 
@@ -18,7 +19,36 @@ namespace LINQExample_2
             //ShowOrderAndCustomer();
             //SortingOperator();
             //GroupingOperator();
-            QuantifierOperator();
+            //QuantifierOperator();
+            FilterOpertor();
+        }
+
+        private static void FilterOpertor()
+        {
+            ArrayList arrayList = new ArrayList(); // using array list just for storing different type of data
+            arrayList.Add(_orderDAL.GetAllOrder());
+            arrayList.Add(_customerDAL.GetAllCustomer());
+
+            var customerResult = from s in arrayList.OfType<List<Customer>>()
+                                 select s;
+            int count = 1;
+            foreach(var item in customerResult.First()) // to get first element of enumerable of list of customer
+            {
+                Console.WriteLine(
+                    $"- - - - - - - - - - - - -   {count}    - - - - - - - - - - - - - -\n" +
+                    $"ID: {item.CustomerID,-7}" +
+                    $" Name: {item.ContactName,-20}" +
+                    $" Title: {item.ContactTitle,-20}" +
+                    $" Company: {item.CompanyName}\n" +
+                    $" Address: {item.Address}\n" +
+                    $" City: {item.City,-20}" +
+                    $" Country: {item.Country,-15}" +
+                    $" Postal code: {item.PostalCode,-15}" +
+                    $" Phone: {item.Phone,-15}" +
+                    $" Fax: {item.Fax} \n"
+                    );
+                count++;
+            }
         }
 
         private static void SortingOperator()
@@ -146,15 +176,6 @@ namespace LINQExample_2
                 }
             }
         }
-        static void GetAppSettingsFile()
-        {
-            var builder = new ConfigurationBuilder()
-                .SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
-            _iconfiguration = builder.Build();
-            _orderDAL = new OrderDAL(_iconfiguration);
-            _customerDAL = new CustomerDAL(_iconfiguration);
-        }
         static void ShowOrderAndCustomer()
         {
             var customerDAL = new CustomerDAL(_iconfiguration);
@@ -201,6 +222,15 @@ namespace LINQExample_2
                     );
                 count++;
             });
+        }
+        static void GetAppSettingsFile()
+        {
+            var builder = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
+            _iconfiguration = builder.Build();
+            _orderDAL = new OrderDAL(_iconfiguration);
+            _customerDAL = new CustomerDAL(_iconfiguration);
         }
     }
 }
