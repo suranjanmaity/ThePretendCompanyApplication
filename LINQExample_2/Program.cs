@@ -1,4 +1,5 @@
-﻿using LINQExample_Northwind.DAL;
+﻿using LINQExample_Northewind.Models;
+using LINQExample_Northwind.DAL;
 using Microsoft.Extensions.Configuration;
 using System.Net;
 
@@ -18,22 +19,41 @@ namespace LINQExample_2
 
         private static void ShowOrderAndCustomerOrderBy()
         {
-            
+
             // Method Syntax
-            var result = _orderDAL.GetAllOrder().Join(_customerDAL.GetAllCustomer(), o => o.CustomerID, c => c.CustomerID,
-                (order, customer) => new
-                {
-                    OrderId = order.OrderID,
-                    CustomerId = order.CustomerID,
-                    CustomerName = customer.ContactName,
-                    ContactTitle = customer.ContactTitle,
-                    CompanyName = customer.CompanyName,
-                    Price = order.Freight,
-                    Address = order.ShipAddress + " " + order.ShipCity + " " + order.ShipPostalCode + " " + order.ShipCountry,
-                    Phone = customer.Phone
-                }).OrderBy(o=>o.CustomerId).ThenBy(o=>o.Price);
+            //var result = _orderDAL.GetAllOrder().Join(_customerDAL.GetAllCustomer(), o => o.CustomerID, c => c.CustomerID,
+            //    (order, customer) => new
+            //    {
+            //        OrderId = order.OrderID,
+            //        CustomerId = order.CustomerID,
+            //        CustomerName = customer.ContactName,
+            //        ContactTitle = customer.ContactTitle,
+            //        CompanyName = customer.CompanyName,
+            //        Price = order.Freight,
+            //        Address = order.ShipAddress + " " + order.ShipCity + " " + order.ShipPostalCode + " " + order.ShipCountry,
+            //        Phone = customer.Phone
+            //    }).OrderBy(o=>o.CustomerId).ThenBy(o=>o.Price);
+
+            // Query Syntax
+            var result = from order in _orderDAL.GetAllOrder()
+                         join customer in _customerDAL.GetAllCustomer()
+                         on order.CustomerID equals customer.CustomerID
+                         orderby customer.CustomerID, order.Freight descending
+                         select new
+                         {
+                             OrderId = order.OrderID,
+                             CustomerId = order.CustomerID,
+                             CustomerName = customer.ContactName,
+                             ContactTitle = customer.ContactTitle,
+                             CompanyName = customer.CompanyName,
+                             Price = order.Freight,
+                             Address = order.ShipAddress + " " + order.ShipCity + " " + order.ShipPostalCode + " " + order.ShipCountry,
+                             Phone = customer.Phone
+                         };
+                         
+
             int count = 0;
-            foreach(var item in result)
+            foreach (var item in result)
             {
                 Console.WriteLine($"{count}\nOrder Id: {item.OrderId,-7} Customer Id: {item.CustomerId,-7} Customer: {item.CustomerName}\t{item.ContactTitle} \nCompany Name: {item.CompanyName}\n Address: {item.Address}\n Price: {item.Price,5} Phone: {item.Phone}\n");
                 count++;
