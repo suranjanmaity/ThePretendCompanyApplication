@@ -14,59 +14,66 @@ namespace LINQExample_2
         {
             GetAppSettingsFile();
             //ShowOrderAndCustomer();
-            ShowOrderAndCustomerOrderBy();
+            //SortingOperator();
+            //GroupingOperator();
+            QuantifierOperator();
         }
 
-        private static void ShowOrderAndCustomerOrderBy()
+        private static void SortingOperator()
         {
-            //// Sorting Operators
-            //// OrderBy OrderByDescending ThenBy ThenByDescending
-            //// Method Syntax
-            //var result = _orderDAL.GetAllOrder().Join(_customerDAL.GetAllCustomer(), o => o.CustomerID, c => c.CustomerID,
-            //    (order, customer) => new
-            //    {
-            //        OrderId = order.OrderID,
-            //        CustomerId = order.CustomerID,
-            //        CustomerName = customer.ContactName,
-            //        ContactTitle = customer.ContactTitle,
-            //        CompanyName = customer.CompanyName,
-            //        Price = order.Freight,
-            //        Address = order.ShipAddress + " " + order.ShipCity + " " + order.ShipPostalCode + " " + order.ShipCountry,
-            //        Phone = customer.Phone
-            //    }).OrderBy(o=>o.CustomerId).ThenBy(o=>o.Price);
+            // Sorting Operators
+            // OrderBy OrderByDescending ThenBy ThenByDescending
+            // Method Syntax
+            var mresult = _orderDAL.GetAllOrder().Join(_customerDAL.GetAllCustomer(), o => o.CustomerID, c => c.CustomerID,
+                (order, customer) => new
+                {
+                    OrderId = order.OrderID,
+                    CustomerId = order.CustomerID,
+                    CustomerName = customer.ContactName,
+                    ContactTitle = customer.ContactTitle,
+                    CompanyName = customer.CompanyName,
+                    Price = order.Freight,
+                    Address = order.ShipAddress + " " + order.ShipCity + " " + order.ShipPostalCode + " " + order.ShipCountry,
+                    Phone = customer.Phone
+                }).OrderBy(o => o.CustomerId).ThenBy(o => o.Price);
+            int count = 0;
+            foreach (var item in mresult)
+            {
+                Console.WriteLine($"{count}\nOrder Id: {item.OrderId,-7} Customer Id: {item.CustomerId,-7} Customer: {item.CustomerName}\t{item.ContactTitle} \nCompany Name: {item.CompanyName}\n Address: {item.Address}\n Price: {item.Price,5} Phone: {item.Phone}\n");
+                count++;
+            }
 
-            //// Query Syntax
-            //var result = from order in _orderDAL.GetAllOrder()
-            //             join customer in _customerDAL.GetAllCustomer()
-            //             on order.CustomerID equals customer.CustomerID
-            //             orderby customer.CustomerID, order.Freight descending
-            //             select new
-            //             {
-            //                 OrderId = order.OrderID,
-            //                 CustomerId = order.CustomerID,
-            //                 CustomerName = customer.ContactName,
-            //                 ContactTitle = customer.ContactTitle,
-            //                 CompanyName = customer.CompanyName,
-            //                 Price = order.Freight,
-            //                 Address = order.ShipAddress + " " + order.ShipCity + " " + order.ShipPostalCode + " " + order.ShipCountry,
-            //                 Phone = customer.Phone
-            //             };
+            // Query Syntax
+            var qresult = from order in _orderDAL.GetAllOrder()
+                         join customer in _customerDAL.GetAllCustomer()
+                         on order.CustomerID equals customer.CustomerID
+                         orderby customer.CustomerID, order.Freight descending
+                         select new
+                         {
+                             OrderId = order.OrderID,
+                             CustomerId = order.CustomerID,
+                             CustomerName = customer.ContactName,
+                             ContactTitle = customer.ContactTitle,
+                             CompanyName = customer.CompanyName,
+                             Price = order.Freight,
+                             Address = order.ShipAddress + " " + order.ShipCity + " " + order.ShipPostalCode + " " + order.ShipCountry,
+                             Phone = customer.Phone
+                         };
 
-            //int count = 0;
-            //foreach (var item in result)
-            //{
-            //    Console.WriteLine($"{count}\nOrder Id: {item.OrderId,-7} Customer Id: {item.CustomerId,-7} Customer: {item.CustomerName}\t{item.ContactTitle} \nCompany Name: {item.CompanyName}\n Address: {item.Address}\n Price: {item.Price,5} Phone: {item.Phone}\n");
-            //    count++;
-            //}
-
-            //// Grouping Operators
-            //// GroupBY query syntax
-            //var groupResult = from order in _orderDAL.GetAllOrder()
-            //                  group order by order.CustomerID;
-            
-            ////ToLookup Operator method syntax
-            var groupResult = _orderDAL.GetAllOrder().ToLookup(o => o.CustomerID);
-            foreach (var ordGroup in groupResult)
+            count = 0;
+            foreach (var item in qresult)
+            {
+                Console.WriteLine($"{count}\nOrder Id: {item.OrderId,-7} Customer Id: {item.CustomerId,-7} Customer: {item.CustomerName}\t{item.ContactTitle} \nCompany Name: {item.CompanyName}\n Address: {item.Address}\n Price: {item.Price,5} Phone: {item.Phone}\n");
+                count++;
+            }
+        }
+        private static void GroupingOperator()
+        {
+            // Grouping Operators
+            // GroupBY query syntax
+            var qgroupResult = from order in _orderDAL.GetAllOrder()
+                              group order by order.CustomerID;
+            foreach (var ordGroup in qgroupResult)
             {
                 int count = 0;
                 Console.WriteLine($"Customer Id: {ordGroup.Key}");
@@ -75,6 +82,44 @@ namespace LINQExample_2
                     Console.WriteLine($"\t-{count}. Order Id: {o.OrderID,-7}\n\tOrder Date: {o.OrderDate} Required Date: {o.RequiredDate} Shiped Date: {o.ShippedDate}\n\t Address: {o.ShipAddress + " " + o.ShipRegion + " " + o.ShipCity + " " + o.ShipCountry + " " + o.ShipPostalCode}\n\t Price: {o.Freight,5}\n");
                     count++;
                 }
+            }
+
+            //ToLookup Operator method syntax
+            var mgroupResult = _orderDAL.GetAllOrder().ToLookup(o => o.CustomerID);
+            foreach (var ordGroup in mgroupResult)
+            {
+                int count = 0;
+                Console.WriteLine($"Customer Id: {ordGroup.Key}");
+                foreach (Order o in ordGroup)
+                {
+                    Console.WriteLine($"\t-{count}. Order Id: {o.OrderID,-7}\n\tOrder Date: {o.OrderDate} Required Date: {o.RequiredDate} Shiped Date: {o.ShippedDate}\n\t Address: {o.ShipAddress + " " + o.ShipRegion + " " + o.ShipCity + " " + o.ShipCountry + " " + o.ShipPostalCode}\n\t Price: {o.Freight,5}\n");
+                    count++;
+                }
+            }
+        }
+        private static void QuantifierOperator()
+        {
+            //// Quantifier Operators
+            //// All and Any Operators
+            decimal freightCompare = 20M;
+            bool isTrueAll = _orderDAL.GetAllOrder().All(o => o.Freight > freightCompare);
+            if(isTrueAll)
+            {
+                Console.WriteLine($"All orders have freight above {freightCompare:C}");
+            }
+            else
+            {
+                Console.WriteLine($"Not all orders have freight above {freightCompare:C}");
+            }
+
+            bool isTrueAny = _orderDAL.GetAllOrder().Any(o => o.Freight > freightCompare);
+            if (isTrueAny)
+            {
+                Console.WriteLine($"At least one order has freight above {freightCompare:C}");
+            }
+            else
+            {
+                Console.WriteLine($"Not a single order has freight above {freightCompare:C}");
             }
 
         }
