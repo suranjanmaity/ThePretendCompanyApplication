@@ -1,30 +1,45 @@
-﻿using System;
-using System.Linq;
-using TCPData;
+﻿using LINQExample_Northwind.DAL;
+using Microsoft.Extensions.Configuration;
 
 namespace LINQExample_2
 {
     class Program
     {
+        private static IConfiguration _iconfiguration;
         static void Main(string[] args)
         {
-            List<Employee> employeeList = Data.GetEmployees();
-            List<Department> departmentList = Data.GetDepartments();
-
-            var result = employeeList.Join(departmentList,e=>e.DepartmentId,d=>d.Id,
-                (emp,dept) => new
-                {
-                    Id = emp.Id,
-                    FirstName = emp.FirstName,
-                    LastName = emp.LastName,
-                    AnnualSalary = emp.AnualSalary,
-                    DepartmentId = emp.DepartmentId,
-                    DepartmentName = dept.LongName
-                }).OrderBy(e=>e.DepartmentId);
-            foreach(var item in result)
+            GetAppSettingsFile();
+            ShowAdventureDepartments();
+        }
+        static void GetAppSettingsFile()
+        {
+            var builder = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
+            _iconfiguration = builder.Build();
+        }
+        static void ShowAdventureDepartments()
+        {
+            var custDAL = new CustomerDAL(_iconfiguration);
+            var lstCustomer = custDAL.GetAllCustomer();
+            int count = 1;
+            lstCustomer.ForEach(item =>
             {
-                Console.WriteLine($"Id: {item.Id,-5} First Name: {item.FirstName,-10} Last Name: {item.LastName,-10} Annual Salary: {item.AnnualSalary,8}\tDepartment Name: {item.DepartmentName}");
-            }
+                Console.WriteLine(
+                    $"- - - - - - - - - - - - -   {count}    - - - - - - - - - - - - - -\n" +
+                    $"ID: {item.CustomerID,-7}" +
+                    $" Name: {item.ContactName,-20}" +
+                    $" Title: {item.ContactTitle,-20}" +
+                    $" Company: {item.CompanyName}\n" +
+                    $" Address: {item.Address}\n" +
+                    $" City: {item.City,-20}" +
+                    $" Country: {item.Country,-15}" +
+                    $" Postal code: {item.PostalCode,-15}" +
+                    $" Phone: {item.Phone,-15}" +
+                    $" Fax: {item.Fax} \n" 
+                    );
+                count++;
+            });
         }
     }
 }

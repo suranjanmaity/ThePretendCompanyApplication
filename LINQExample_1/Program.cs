@@ -63,26 +63,26 @@ namespace LINQExample_1
             /*
              * Immediate execution evaluates on single execution while beign declared which is you can say Early Evaluation 
              */
-            //var result = (from emp in employeeList.GetHighSalariedEmployees()
-            //             select new
-            //             {
-            //                 FullName = emp.FirstName + " " + emp.LastName,
-            //                 AnnualSalary = emp.AnualSalary
-            //             }).ToList();
+            var result = (from emp in employeeList.GetHighSalariedEmployees()
+                          select new
+                          {
+                              FullName = emp.FirstName + " " + emp.LastName,
+                              AnnualSalary = emp.AnualSalary
+                          }).ToList();
             /* immediate execution means the new employee will not be added to employeelist before the execution of result */
-            //employeeList.Add(new Employee
-            //{
-            //    Id = 5,
-            //    FirstName = "Surj",
-            //    LastName = "Maity",
-            //    AnualSalary = 100000.20m,
-            //    IsManager = true,
-            //    DepartmentId = 2,
-            //});
-            //foreach (var res in result)
-            //{
-            //    Console.WriteLine($"{res.FullName,-20} {res.AnnualSalary,10}");
-            //}
+            employeeList.Add(new Employee
+            {
+                Id = 5,
+                FirstName = "Surj",
+                LastName = "Maity",
+                AnualSalary = 100000.20m,
+                IsManager = true,
+                DepartmentId = 2,
+            });
+            foreach (var res in result)
+            {
+                Console.WriteLine($"{res.FullName,-20} {res.AnnualSalary,10}");
+            }
 
             //// Join Operation Example - Method Syntax
             //var result = departmentList.Join(employeeList,
