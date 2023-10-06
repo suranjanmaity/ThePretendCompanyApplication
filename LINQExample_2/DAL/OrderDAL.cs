@@ -23,6 +23,7 @@ namespace LINQExample_Northwind.DAL
             {
                 using (SqlConnection con = new SqlConnection(_connectionString))
                 {
+                    // using stored procedure
                     SqlCommand cmd = new SqlCommand($"EXEC GetOrderInfo @Count = {count}", con);
                     cmd.CommandType = CommandType.Text;
                     con.Open();

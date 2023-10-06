@@ -1,5 +1,4 @@
-﻿using LINQExample_Northewind.Models;
-using LINQExample_Northwind.DAL;
+﻿using LINQExample_Northwind.DAL;
 using Microsoft.Extensions.Configuration;
 using System.Net;
 
@@ -8,22 +7,53 @@ namespace LINQExample_2
     class Program
     {
         private static IConfiguration _iconfiguration;
+        private static OrderDAL _orderDAL;
+        private static CustomerDAL _customerDAL;
         static void Main(string[] args)
         {
             GetAppSettingsFile();
-            ShowAdventureDepartments();
+            //ShowOrderAndCustomer();
+            ShowOrderAndCustomerOrderBy();
         }
+
+        private static void ShowOrderAndCustomerOrderBy()
+        {
+            
+            // Method Syntax
+            var result = _orderDAL.GetAllOrder().Join(_customerDAL.GetAllCustomer(), o => o.CustomerID, c => c.CustomerID,
+                (order, customer) => new
+                {
+                    OrderId = order.OrderID,
+                    CustomerId = order.CustomerID,
+                    CustomerName = customer.ContactName,
+                    ContactTitle = customer.ContactTitle,
+                    CompanyName = customer.CompanyName,
+                    Price = order.Freight,
+                    Address = order.ShipAddress + " " + order.ShipCity + " " + order.ShipPostalCode + " " + order.ShipCountry,
+                    Phone = customer.Phone
+                }).OrderBy(o=>o.CustomerId).ThenBy(o=>o.Price);
+            int count = 0;
+            foreach(var item in result)
+            {
+                Console.WriteLine($"{count}\nOrder Id: {item.OrderId,-7} Customer Id: {item.CustomerId,-7} Customer: {item.CustomerName}\t{item.ContactTitle} \nCompany Name: {item.CompanyName}\n Address: {item.Address}\n Price: {item.Price,5} Phone: {item.Phone}\n");
+                count++;
+            }
+
+        }
+
         static void GetAppSettingsFile()
         {
             var builder = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
             _iconfiguration = builder.Build();
+            _orderDAL = new OrderDAL(_iconfiguration);
+            _customerDAL = new CustomerDAL(_iconfiguration);
         }
-        static void ShowAdventureDepartments()
+        static void ShowOrderAndCustomer()
         {
-            var custDAL = new CustomerDAL(_iconfiguration);
-            var lstCustomer = custDAL.GetAllCustomer();
+            var customerDAL = new CustomerDAL(_iconfiguration);
+            var lstCustomer = customerDAL.GetAllCustomer();
             int count = 1;
             lstCustomer.ForEach(item =>
             {
