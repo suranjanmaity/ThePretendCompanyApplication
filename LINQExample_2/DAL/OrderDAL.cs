@@ -21,34 +21,33 @@ namespace LINQExample_Northwind.DAL
             var lstOrder = new List<Order>();
             try
             {
-                using (SqlConnection con = new SqlConnection(_connectionString))
+                using SqlConnection con = new(_connectionString); // simplified using and new
+                // using stored procedure
+                SqlCommand cmd = new($"EXEC GetOrderInfo @Count = {count}", con)
                 {
-                    // using stored procedure
-                    SqlCommand cmd = new SqlCommand($"EXEC GetOrderInfo @Count = {count}", con);
-                    cmd.CommandType = CommandType.Text;
-                    con.Open();
-                    SqlDataReader rdr = cmd.ExecuteReader();
-                    while (rdr.Read())
+                    CommandType = CommandType.Text // object initialization simplified
+                };
+                con.Open();
+                SqlDataReader rdr = cmd.ExecuteReader();
+                while (rdr.Read())
+                {
+                    lstOrder.Add(new Order
                     {
-                        lstOrder.Add(new Order
-                        {
-                            OrderID = rdr.IsDBNull(rdr.GetOrdinal("OrderID"))?0:rdr.GetInt32(rdr.GetOrdinal("OrderID")),
-                            CustomerID = rdr.IsDBNull(rdr.GetOrdinal("CustomerID"))?"":rdr.GetString(rdr.GetOrdinal("CustomerID")),
-                            EmployeeID = rdr.IsDBNull(rdr.GetOrdinal("EmployeeID"))?0:rdr.GetInt32(rdr.GetOrdinal("EmployeeID")),
-                            OrderDate = rdr.IsDBNull(rdr.GetOrdinal("OrderDate"))?DateTime.MinValue:rdr.GetDateTime(rdr.GetOrdinal("OrderDate")),
-                            RequiredDate = rdr.IsDBNull(rdr.GetOrdinal("RequiredDate"))? DateTime.MinValue : rdr.GetDateTime(rdr.GetOrdinal("RequiredDate")),
-                            ShippedDate = rdr.IsDBNull(rdr.GetOrdinal("ShippedDate"))? DateTime.MinValue : rdr.GetDateTime(rdr.GetOrdinal("ShippedDate")),
-                            ShipVia = rdr.IsDBNull(rdr.GetOrdinal("ShipVia"))?0:rdr.GetInt32(rdr.GetOrdinal("ShipVia")),
-                            Freight = rdr.IsDBNull(rdr.GetOrdinal("Freight"))?0:rdr.GetDecimal(rdr.GetOrdinal("Freight")),
-                            ShipName = rdr.IsDBNull(rdr.GetOrdinal("ShipName"))?"":rdr.GetString(rdr.GetOrdinal("ShipName")),
-                            ShipAddress = rdr.IsDBNull(rdr.GetOrdinal("ShipAddress"))?"":rdr.GetString(rdr.GetOrdinal("ShipAddress")),
-                            ShipCity = rdr.IsDBNull(rdr.GetOrdinal("ShipCity"))?"":rdr.GetString(rdr.GetOrdinal("ShipCity")),
-                            ShipRegion = rdr.IsDBNull(rdr.GetOrdinal("ShipRegion"))?"":rdr.GetString(rdr.GetOrdinal("ShipRegion")),
-                            ShipPostalCode = rdr.IsDBNull(rdr.GetOrdinal("ShipPostalCode"))?"":rdr.GetString(rdr.GetOrdinal("ShipPostalCode")),
-                            ShipCountry = rdr.IsDBNull(rdr.GetOrdinal("ShipCountry"))?"":rdr.GetString(rdr.GetOrdinal("ShipCountry")),
-                        });
-                    }
-
+                        OrderID = rdr.IsDBNull(rdr.GetOrdinal("OrderID")) ? 0 : rdr.GetInt32(rdr.GetOrdinal("OrderID")),
+                        CustomerID = rdr.IsDBNull(rdr.GetOrdinal("CustomerID")) ? "" : rdr.GetString(rdr.GetOrdinal("CustomerID")),
+                        EmployeeID = rdr.IsDBNull(rdr.GetOrdinal("EmployeeID")) ? 0 : rdr.GetInt32(rdr.GetOrdinal("EmployeeID")),
+                        OrderDate = rdr.IsDBNull(rdr.GetOrdinal("OrderDate")) ? DateTime.MinValue : rdr.GetDateTime(rdr.GetOrdinal("OrderDate")),
+                        RequiredDate = rdr.IsDBNull(rdr.GetOrdinal("RequiredDate")) ? DateTime.MinValue : rdr.GetDateTime(rdr.GetOrdinal("RequiredDate")),
+                        ShippedDate = rdr.IsDBNull(rdr.GetOrdinal("ShippedDate")) ? DateTime.MinValue : rdr.GetDateTime(rdr.GetOrdinal("ShippedDate")),
+                        ShipVia = rdr.IsDBNull(rdr.GetOrdinal("ShipVia")) ? 0 : rdr.GetInt32(rdr.GetOrdinal("ShipVia")),
+                        Freight = rdr.IsDBNull(rdr.GetOrdinal("Freight")) ? 0 : rdr.GetDecimal(rdr.GetOrdinal("Freight")),
+                        ShipName = rdr.IsDBNull(rdr.GetOrdinal("ShipName")) ? "" : rdr.GetString(rdr.GetOrdinal("ShipName")),
+                        ShipAddress = rdr.IsDBNull(rdr.GetOrdinal("ShipAddress")) ? "" : rdr.GetString(rdr.GetOrdinal("ShipAddress")),
+                        ShipCity = rdr.IsDBNull(rdr.GetOrdinal("ShipCity")) ? "" : rdr.GetString(rdr.GetOrdinal("ShipCity")),
+                        ShipRegion = rdr.IsDBNull(rdr.GetOrdinal("ShipRegion")) ? "" : rdr.GetString(rdr.GetOrdinal("ShipRegion")),
+                        ShipPostalCode = rdr.IsDBNull(rdr.GetOrdinal("ShipPostalCode")) ? "" : rdr.GetString(rdr.GetOrdinal("ShipPostalCode")),
+                        ShipCountry = rdr.IsDBNull(rdr.GetOrdinal("ShipCountry")) ? "" : rdr.GetString(rdr.GetOrdinal("ShipCountry")),
+                    });
                 }
             }
             catch (Exception)

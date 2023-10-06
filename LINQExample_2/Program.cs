@@ -19,8 +19,9 @@ namespace LINQExample_2
 
         private static void ShowOrderAndCustomerOrderBy()
         {
-
-            // Method Syntax
+            //// Sorting Operators
+            //// OrderBy OrderByDescending ThenBy ThenByDescending
+            //// Method Syntax
             //var result = _orderDAL.GetAllOrder().Join(_customerDAL.GetAllCustomer(), o => o.CustomerID, c => c.CustomerID,
             //    (order, customer) => new
             //    {
@@ -34,31 +35,44 @@ namespace LINQExample_2
             //        Phone = customer.Phone
             //    }).OrderBy(o=>o.CustomerId).ThenBy(o=>o.Price);
 
-            // Query Syntax
-            var result = from order in _orderDAL.GetAllOrder()
-                         join customer in _customerDAL.GetAllCustomer()
-                         on order.CustomerID equals customer.CustomerID
-                         orderby customer.CustomerID, order.Freight descending
-                         select new
-                         {
-                             OrderId = order.OrderID,
-                             CustomerId = order.CustomerID,
-                             CustomerName = customer.ContactName,
-                             ContactTitle = customer.ContactTitle,
-                             CompanyName = customer.CompanyName,
-                             Price = order.Freight,
-                             Address = order.ShipAddress + " " + order.ShipCity + " " + order.ShipPostalCode + " " + order.ShipCountry,
-                             Phone = customer.Phone
-                         };
-                         
+            //// Query Syntax
+            //var result = from order in _orderDAL.GetAllOrder()
+            //             join customer in _customerDAL.GetAllCustomer()
+            //             on order.CustomerID equals customer.CustomerID
+            //             orderby customer.CustomerID, order.Freight descending
+            //             select new
+            //             {
+            //                 OrderId = order.OrderID,
+            //                 CustomerId = order.CustomerID,
+            //                 CustomerName = customer.ContactName,
+            //                 ContactTitle = customer.ContactTitle,
+            //                 CompanyName = customer.CompanyName,
+            //                 Price = order.Freight,
+            //                 Address = order.ShipAddress + " " + order.ShipCity + " " + order.ShipPostalCode + " " + order.ShipCountry,
+            //                 Phone = customer.Phone
+            //             };
 
-            int count = 0;
-            foreach (var item in result)
+            //int count = 0;
+            //foreach (var item in result)
+            //{
+            //    Console.WriteLine($"{count}\nOrder Id: {item.OrderId,-7} Customer Id: {item.CustomerId,-7} Customer: {item.CustomerName}\t{item.ContactTitle} \nCompany Name: {item.CompanyName}\n Address: {item.Address}\n Price: {item.Price,5} Phone: {item.Phone}\n");
+            //    count++;
+            //}
+
+            // Grouping Operators
+            // GroupBY
+            var groupResult = from order in _orderDAL.GetAllOrder()
+                              group order by order.CustomerID;
+            foreach (var ordGroup in groupResult)
             {
-                Console.WriteLine($"{count}\nOrder Id: {item.OrderId,-7} Customer Id: {item.CustomerId,-7} Customer: {item.CustomerName}\t{item.ContactTitle} \nCompany Name: {item.CompanyName}\n Address: {item.Address}\n Price: {item.Price,5} Phone: {item.Phone}\n");
-                count++;
+                int count = 0;
+                Console.WriteLine($"Customer Id: { ordGroup.Key}");
+                foreach(Order o in ordGroup)
+                {
+                    Console.WriteLine($"-{count}. Order Id: {o.OrderID,-7}\nOrder Date: {o.OrderDate} Required Date: {o.RequiredDate} Shiped Date: {o.ShippedDate}\n Address: {o.ShipAddress +" "+ o.ShipRegion + " " + o.ShipCity + " " + o.ShipCountry + " " + o.ShipPostalCode}\n Price: {o.Freight,5}\n");
+                    count++;
+                }
             }
-
         }
 
         static void GetAppSettingsFile()
