@@ -1,6 +1,8 @@
 ﻿using LINQExample_Northewind.Models;
+using LINQExample_Northwind.Comparer;
 using LINQExample_Northwind.DAL;
 using Microsoft.Extensions.Configuration;
+using System.ComponentModel.DataAnnotations;
 using System.Net;
 
 namespace LINQExample_2
@@ -100,7 +102,7 @@ namespace LINQExample_2
         private static void QuantifierOperator()
         {
             //// Quantifier Operators
-            //// All and Any Operators
+            // All and Any Operators
             decimal freightCompare = 20M;
             bool isTrueAll = _orderDAL.GetAllOrder().All(o => o.Freight > freightCompare);
             if(isTrueAll)
@@ -121,9 +123,29 @@ namespace LINQExample_2
             {
                 Console.WriteLine($"Not a single order has freight above {freightCompare:C}");
             }
-
+            // Contains Operator
+            var searchOrder = from order in _orderDAL.GetAllOrder()
+                              where order.Freight >= freightCompare // it will return a list
+                              select order;
+            if (searchOrder!=null)
+            {
+                bool containsOrder = _orderDAL.GetAllOrder()
+                                              .Contains(searchOrder.First(), new OrderComparer()); // that's why we are using first one
+                if (containsOrder)
+                {
+                    Console.WriteLine($"Order that has freight above than {freightCompare:C}");
+                    int count = 0;
+                    foreach(var o in searchOrder)
+                    {
+                        Console.WriteLine($"{count++}\nOrder Id: {o.OrderID}\tCustomer Id: {o.CustomerID}\tPrice: {o.Freight:C}");
+                    }
+                }
+                else
+                {
+                    Console.WriteLine($"Not a single order has freight above {freightCompare:C}");
+                }
+            }
         }
-
         static void GetAppSettingsFile()
         {
             var builder = new ConfigurationBuilder()
