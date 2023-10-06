@@ -59,20 +59,24 @@ namespace LINQExample_2
             //    count++;
             //}
 
-            // Grouping Operators
-            // GroupBY
-            var groupResult = from order in _orderDAL.GetAllOrder()
-                              group order by order.CustomerID;
+            //// Grouping Operators
+            //// GroupBY query syntax
+            //var groupResult = from order in _orderDAL.GetAllOrder()
+            //                  group order by order.CustomerID;
+            
+            ////ToLookup Operator method syntax
+            var groupResult = _orderDAL.GetAllOrder().ToLookup(o => o.CustomerID);
             foreach (var ordGroup in groupResult)
             {
                 int count = 0;
-                Console.WriteLine($"Customer Id: { ordGroup.Key}");
-                foreach(Order o in ordGroup)
+                Console.WriteLine($"Customer Id: {ordGroup.Key}");
+                foreach (Order o in ordGroup)
                 {
-                    Console.WriteLine($"-{count}. Order Id: {o.OrderID,-7}\nOrder Date: {o.OrderDate} Required Date: {o.RequiredDate} Shiped Date: {o.ShippedDate}\n Address: {o.ShipAddress +" "+ o.ShipRegion + " " + o.ShipCity + " " + o.ShipCountry + " " + o.ShipPostalCode}\n Price: {o.Freight,5}\n");
+                    Console.WriteLine($"\t-{count}. Order Id: {o.OrderID,-7}\n\tOrder Date: {o.OrderDate} Required Date: {o.RequiredDate} Shiped Date: {o.ShippedDate}\n\t Address: {o.ShipAddress + " " + o.ShipRegion + " " + o.ShipCity + " " + o.ShipCountry + " " + o.ShipPostalCode}\n\t Price: {o.Freight,5}\n");
                     count++;
                 }
             }
+
         }
 
         static void GetAppSettingsFile()
