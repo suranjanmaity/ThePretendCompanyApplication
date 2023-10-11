@@ -20,7 +20,13 @@ namespace LINQExample_2
             //SortingOperator();
             //GroupingOperator();
             //QuantifierOperator();
-            FilterOpertor();
+            //FilterOpertor();
+            ElementOperator();
+        }
+
+        private static void ElementOperator()
+        {
+            //////////////////// Already used these in login signup project ///////////////////
         }
 
         private static void FilterOpertor()
